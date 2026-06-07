@@ -1,3 +1,6 @@
+using System.Text;
+using Prion.Utils;
+
 namespace Prion.Node;
 
 public enum PriNodeKind
@@ -15,6 +18,8 @@ public abstract class PriNode
 {
     // public virtual bool IsError(){return false;}
     // public virtual bool IsImmutable(){return true;}
+    protected static readonly StringBuilder Sb = new();
+    protected static readonly PriSbPool SbPool = new();
     public abstract PriNodeKind Kind{get;}
     public virtual bool IsError{get => false;}
     public virtual bool IsImmutable{get => true;}

@@ -1,6 +1,3 @@
-using System.Text;
-using Prion.Utils;
-
 namespace Prion.Node;
 
 public class PriNumber: PriNode
@@ -17,19 +14,11 @@ public class PriNumber: PriNode
         Hex,
         Binary,
     }
-    // private static readonly StringBuilder Sb = new();
-    // public readonly string Literal;
     public readonly decimal Value;
     public readonly NumberMode Mode;
     public readonly int SizeInBits;
     public readonly NumberRadix Radix;
     public override PriNodeKind Kind => PriNodeKind.Number;
-    // private int? I32_;
-    // public int I32{get => I32_ ??= int.Parse(Literal, GetIntNumberStyle());}
-    // private long? I64_;
-    // public long I64{get => I64_ ??= long.Parse(Literal, GetIntNumberStyle());}
-    // private ulong? U64_;
-    // public ulong U64{get => U64_ ??= ulong.Parse(Literal, GetIntNumberStyle());}
     public PriNumber(decimal value, NumberMode mode, int sizeInBits, NumberRadix radix = NumberRadix.Decimal)
     {
         Value = value;
@@ -47,20 +36,9 @@ public class PriNumber: PriNode
     public PriNumber(ushort value, NumberRadix radix = NumberRadix.Decimal):this(value, NumberMode.UnsignedInt, 16, radix){}
     public PriNumber(uint value, NumberRadix radix = NumberRadix.Decimal):this(value, NumberMode.UnsignedInt, 32, radix){}
     public PriNumber(ulong value, NumberRadix radix = NumberRadix.Decimal):this(value, NumberMode.UnsignedInt, 64, radix){}
-    // private System.Globalization.NumberStyles GetIntNumberStyle()
-    // {
-    //     // System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Integer;
-    //     return Radix switch
-    //     {
-    //         NumberRadix.Decimal => System.Globalization.NumberStyles.Integer,
-    //         NumberRadix.Hex => System.Globalization.NumberStyles.HexNumber & System.Globalization.NumberStyles.AllowLeadingSign,
-    //         NumberRadix.Binary => System.Globalization.NumberStyles.BinaryNumber & System.Globalization.NumberStyles.AllowLeadingSign,
-    //         _ => System.Globalization.NumberStyles.None,
-    //     };
-    // }
     public override string ToString()
     {
-        var Sb = PriSbPool.Get();
+        Sb.Clear();
         decimal value = Value;
         if(value < 0)
         {
@@ -93,6 +71,6 @@ public class PriNumber: PriNode
         }
         if(Mode == NumberMode.SignedInt && SizeInBits == 32) return Sb.ToString();
         Sb.Append(Mode == NumberMode.SignedInt ? $"i{SizeInBits}" : $"u{SizeInBits}");
-        return PriSbPool.Free(Sb);
+        return Sb.ToString();
     }
 }
