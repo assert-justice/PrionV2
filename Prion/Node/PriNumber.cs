@@ -19,13 +19,14 @@ public class PriNumber: PriNode
     public readonly int SizeInBits;
     public readonly NumberRadix Radix;
     public override PriNodeKind Kind => PriNodeKind.Number;
-    public PriNumber(decimal value, NumberMode mode, int sizeInBits, NumberRadix radix = NumberRadix.Decimal)
+    public PriNumber(decimal value, NumberMode mode, int sizeInBits = sizeof(decimal) * 8, NumberRadix radix = NumberRadix.Decimal)
     {
         Value = value;
         Mode = mode;
         SizeInBits = sizeInBits;
         Radix = radix;
     }
+    // public PriNumber(decimal value, NumberRadix radix = NumberRadix.Decimal):this(value, )
     public PriNumber(double value, NumberRadix radix = NumberRadix.Decimal):this((decimal)value, NumberMode.Float, 64, radix){}
     public PriNumber(float value, NumberRadix radix = NumberRadix.Decimal):this((decimal)value, NumberMode.Float, 32, radix){}
     public PriNumber(sbyte value, NumberRadix radix = NumberRadix.Decimal):this(value, NumberMode.UnsignedInt, 8, radix){}

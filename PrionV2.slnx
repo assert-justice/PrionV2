@@ -3,6 +3,7 @@
     <Project Path="Examples/JsonToPrion/JsonToPrion.csproj" />
     <Project Path="Examples/ParserDemo/ParserDemo.csproj" />
     <Project Path="Examples/PrionToJson/PrionToJson.csproj" />
+    <Project Path="Examples/SchemaDemo/SchemaDemo.csproj" />
   </Folder>
   <Project Path="Prion/Prion.csproj" />
   <Project Path="PrionTests/PrionTests.csproj" />
