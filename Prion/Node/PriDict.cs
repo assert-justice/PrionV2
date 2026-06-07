@@ -2,6 +2,7 @@ namespace Prion.Node;
 public class PriDict: PriNode
 {
     public readonly Dictionary<string,PriNode> Data = [];
+    public PriDict(){}
     public PriDict(Dictionary<string,PriNode> data)
     {
         Data = data;

@@ -57,23 +57,24 @@ internal class PriParserInternal
     //     UnsignedInt,
     //     Float,
     // }
-    private bool TryParseNumber(out PriNode priNode)
+    private bool TryParseNumber(out PriNode priNode, bool negate = false)
     {
-        int start = Scanner.Current;
         priNode = PriNull.Null;
         Scanner.Whitespace();
-        if(!Scanner.TryPeek(out char c)) return false;
-        if(c != '-' && !char.IsAsciiDigit(c)) return false;
-        Scanner.Advance();
+        int start = Scanner.Current;
+        if(!Scanner.TryNext(out char c)) return false;
+        if(!char.IsAsciiDigit(c)) return false;
+        // if(c != '-' && !char.IsAsciiDigit(c)) return false;
+        // Scanner.Advance();
 
         // if(!Scanner.TryNext(out char c)) return false;
-        bool negate = false;
-        if(c == '-')
-        {
-            negate = true;
-            Scanner.Whitespace();
-            if(!Scanner.TryNext(out c) || !char.IsAsciiDigit(c)) return SetError("Unexpected '-' while parsing", out priNode);
-        }
+        // bool negate = false;
+        // if(c == '-')
+        // {
+        //     negate = true;
+        //     Scanner.Whitespace();
+        //     if(!Scanner.TryNext(out c) || !char.IsAsciiDigit(c)) return SetError("Unexpected '-' while parsing", out priNode);
+        // }
         PriNumber.NumberRadix radix = PriNumber.NumberRadix.Decimal;
         int size = 0;
         // bool isFloat = false;
@@ -189,7 +190,7 @@ internal class PriParserInternal
             if(mode == PriNumber.NumberMode.UnsignedInt) return SetError("Attempted to negate an unsigned integer", start, out priNode);
             value = -value;
         }
-        Console.WriteLine($"literal: {literal}, value: {value}, mode: {mode}, size: {size}, radix: {radix}");
+        // Console.WriteLine($"literal: {literal}, value: {value}, mode: {mode}, size: {size}, radix: {radix}");
         priNode = new PriNumber(value, mode, size, radix);
         return true;
     }
@@ -237,15 +238,12 @@ internal class PriParserInternal
         while (!Scanner.AtEof())
         {
             int start = Scanner.Current;
-            Scanner.Whitespace();
-            if(Scanner.Match(']')) {finished = true; break;}
-            // Note: returning true here means the array was parsing fine but it found an error deeper down.
-            if(!TryParseValue(out priNode)) return false;
-            nodes.Add(priNode);
-            Scanner.Whitespace();
+            if(MatchSymbol(']')) {finished = true; break;}
+            if(!TryParseValue(out var valueNode)) return false;
+            nodes.Add(valueNode);
             if(Scanner.Current == start) return SetError("Internal error, breaking infinite loop", out priNode);
-            if(Scanner.Match(',')) continue;
-            if(Scanner.Match(']')) {finished = true; break;}
+            if(MatchSymbol(',')) continue;
+            if(MatchSymbol(']')) {finished = true; break;}
             return SetError("Elements in a list must be comma separated", out priNode);
         }
         if (finished)
@@ -264,16 +262,16 @@ internal class PriParserInternal
         while (!Scanner.AtEof())
         {
             // Get key
-            if(Scanner.Match(']')) {finished = true; break;}
+            if(MatchSymbol('}')) {finished = true; break;}
             int start = Scanner.Current;
-            if(!TryParseIdent(out priNode)) return true;
-            if(priNode.ToString() is not string key) return SetError("Bad key, should be unreachable", out priNode);
+            if(!TryParseIdent(out var keyNode)) return false;
+            if(keyNode.ToString() is not string key) return SetError("Bad key, should be unreachable", out priNode);
             if(dict.ContainsKey(key)) return SetError($"Key '{key}' already exists in the dictionary. Duplicate keys are not allowed.", start, out priNode);
             if (!MatchSymbol(':')) return SetError("Expected colon after field identifier", start, out priNode);
-            if(!TryParseValue(out priNode)) return false;
-            dict.Add(key, priNode);
-            if(Scanner.Match(',')) continue;
-            if(Scanner.Match('}')) {finished = true; break;}
+            if(!TryParseValue(out var valueNode)) return false;
+            dict.Add(key, valueNode);
+            if(MatchSymbol(',')) continue;
+            if(MatchSymbol('}')) {finished = true; break;}
             return SetError("Expected comma or end brace after dictionary value", out priNode);
         }
         if (finished)
@@ -313,7 +311,9 @@ internal class PriParserInternal
             priNode = PriBool.False;
             return true;
         }
-        if(TryParseNumber(out priNode)) return true;
+        bool negate = false;
+        if(MatchSymbol('-')) negate = true;
+        if(TryParseNumber(out priNode, negate)) return true;
         // Console.WriteLine(priNode);
         if(priNode.IsError()) return false;
         if(Error is not null) return false;

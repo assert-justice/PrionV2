@@ -2,6 +2,7 @@ namespace Prion.Node;
 public class PriList: PriNode
 {
     public readonly List<PriNode> Values = [];
+    public PriList(){}
     public PriList(List<PriNode> values)
     {
         Values = values;
@@ -11,7 +12,7 @@ public class PriList: PriNode
     {
         if(Values.Count == 0) return "[]";
         string str = $"[{Values[0]}";
-        for (int idx = 0; idx < Values.Count; idx++)
+        for (int idx = 1; idx < Values.Count; idx++)
         {
             str += $", {Values[idx]}";
         }

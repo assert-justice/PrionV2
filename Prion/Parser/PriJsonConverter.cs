@@ -35,12 +35,22 @@ internal class PriJsonConverter
                 return PriNull.Null;
         }
     }
-    private static PriNode JsonObjectToPrion(JsonObject jsonObject)
+    private static PriDict JsonObjectToPrion(JsonObject jsonObject)
     {
-        return PriNull.Null;
+        PriDict dict = new();
+        foreach (var (key,value) in jsonObject)
+        {
+            dict.Data.Add(key, JsonToPrion(value));
+        }
+        return dict;
     }
-    private static PriNode JsonArrayToPrion(JsonArray jsonArray)
+    private static PriList JsonArrayToPrion(JsonArray jsonArray)
     {
-        return PriNull.Null;
+        PriList list = new();
+        foreach (var item in jsonArray)
+        {
+            list.Values.Add(JsonToPrion(item));
+        }
+        return list;
     }
 }

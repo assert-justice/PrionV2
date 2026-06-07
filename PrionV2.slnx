@@ -1,5 +1,7 @@
 <Solution>
   <Folder Name="/Examples/">
+    <Project Path="Examples/JsonToPrion/JsonToPrion.csproj" />
+    <Project Path="Examples/ParserDemo/ParserDemo.csproj" />
     <Project Path="Examples/PrionToJson/PrionToJson.csproj" />
   </Folder>
   <Project Path="Prion/Prion.csproj" />
