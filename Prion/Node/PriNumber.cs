@@ -1,4 +1,5 @@
 using System.Text;
+using Prion.Utils;
 
 namespace Prion.Node;
 
@@ -16,7 +17,7 @@ public class PriNumber: PriNode
         Hex,
         Binary,
     }
-    private static readonly StringBuilder Sb = new();
+    // private static readonly StringBuilder Sb = new();
     // public readonly string Literal;
     public readonly decimal Value;
     public readonly NumberMode Mode;
@@ -58,7 +59,7 @@ public class PriNumber: PriNode
     // }
     public override string ToString()
     {
-        Sb.Clear();
+        var Sb = PriSbPool.Get();
         decimal value = Value;
         if(value < 0)
         {
@@ -91,6 +92,6 @@ public class PriNumber: PriNode
         }
         if(Mode == NumberMode.SignedInt && SizeInBits == 32) return Sb.ToString();
         Sb.Append(Mode == NumberMode.SignedInt ? $"i{SizeInBits}" : $"u{SizeInBits}");
-        return Sb.ToString();
+        return PriSbPool.Free(Sb);
     }
 }

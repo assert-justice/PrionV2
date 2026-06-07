@@ -1,3 +1,5 @@
+using Prion.Utils;
+
 namespace Prion.Node;
 public class PriList: PriNode
 {
@@ -10,13 +12,21 @@ public class PriList: PriNode
     public override bool IsImmutable(){return false;}
     public override string ToString()
     {
-        if(Values.Count == 0) return "[]";
-        string str = $"[{Values[0]}";
-        for (int idx = 1; idx < Values.Count; idx++)
+        var Sb = PriSbPool.Get();
+        Sb.Append('[');
+        foreach (var item in Values)
         {
-            str += $", {Values[idx]}";
+            Sb.Append(item.ToString());
+            Sb.Append(',');
         }
-        str += "]";
-        return str;
+        Sb.Append(']');
+        // if(Values.Count == 0) return "[]";
+        // string str = $"[{Values[0]}";
+        // for (int idx = 1; idx < Values.Count; idx++)
+        // {
+        //     str += $", {Values[idx]}";
+        // }
+        // str += "]";
+        return PriSbPool.Free(Sb);
     }
 }

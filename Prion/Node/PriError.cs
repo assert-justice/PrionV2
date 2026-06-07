@@ -1,4 +1,5 @@
 using System.Text;
+using Prion.Utils;
 
 namespace Prion.Node;
 public class PriError: PriNode
@@ -10,7 +11,7 @@ public class PriError: PriNode
     public readonly int LineNumber;
     public readonly int Position;
     public readonly string LineText;
-    private readonly StringBuilder Sb = new();
+    // private readonly StringBuilder Sb = new();
     // public bool IsError => false;
     public override bool IsError(){return true;}
     public PriError(string message, string src = "", int charIndex = 0, string filename = "[anonymous file]")
@@ -35,13 +36,13 @@ public class PriError: PriNode
     }
     public override string ToString()
     {
-        Sb.Clear();
+        var Sb = PriSbPool.Get();
         Sb.Append($"Error at {Filename}{LineNumber}:{Position}> {Message}\n{LineText}\n");
         for(int idx = 0; idx < LineText.Length; idx++)
         {
             Sb.Append(idx == Position ? '^' : '~');
         }
-        return Sb.ToString();
+        return PriSbPool.Free(Sb);
         // return $"Error at char {CharIndex}: {Message}";
     }
 }

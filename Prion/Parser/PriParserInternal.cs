@@ -1,12 +1,13 @@
 using System.Text;
 using Prion.Node;
+using Prion.Utils;
 
 namespace Prion.Parser;
 
 internal class PriParserInternal
 {
     private readonly PriScanner Scanner = new();
-    private readonly StringBuilder Sb = new();
+    // private readonly StringBuilder Sb = new();
     private PriError? Error;
     private bool SetError(string message, out PriNode priNode)
     {
@@ -30,19 +31,20 @@ internal class PriParserInternal
     {
         // Note: opening quote already consumed
         int start = Scanner.Current;
-        Sb.Clear();
+        var Sb = PriSbPool.Get();
         while(Scanner.TryNext(out char c))
         {
             // Todo: handle escape characters
             if(c=='\\'){}
             if(c == '"')
             {
-                string str = Scanner.Src[start..(Scanner.Current - 1)];
-                priNode = new PriString(str);
+                // string str = Scanner.Src[start..(Scanner.Current - 1)];
+                priNode = new PriString(PriSbPool.Free(Sb));
                 return true;
             }
             Sb.Append(c);
         }
+        PriSbPool.Free(Sb);
         return SetError("Unexpected eof while parsing string", start, out priNode);
     }
     // private bool TryParseTuple(out PriNode priNode)
@@ -80,7 +82,7 @@ internal class PriParserInternal
         // bool isFloat = false;
         bool hasDecimal = false;
         PriNumber.NumberMode mode = PriNumber.NumberMode.SignedInt;
-        Sb.Clear();
+        var Sb = PriSbPool.Get();
         // Console.WriteLine($"c: {c}");
         // Handle sign
         // bool negate = Scanner.Match('-');
@@ -148,7 +150,7 @@ internal class PriParserInternal
             }
             break;
         }
-        string literal = Sb.ToString();
+        string literal = PriSbPool.Free(Sb);
         if(hasDecimal && mode != PriNumber.NumberMode.Float) return SetError("Invalid number literal, found a decimal point in a number with an integer suffix.", start, out priNode);
         if(size == 0) size = mode == PriNumber.NumberMode.Float ? 64 : 32;
         if(mode == PriNumber.NumberMode.Float && size != 64 && size != 32)
@@ -200,7 +202,7 @@ internal class PriParserInternal
         Scanner.Whitespace();
         int start = Scanner.Current;
         if(!Scanner.TryPeek(out char c)) return SetError("Expected identifier, found eof", out priNode);
-        Sb.Clear();
+        var Sb = PriSbPool.Get();
         // Handle ascii identifiers. Note this will also parse keywords like true, false, and null.
         if (char.IsAsciiLetter(c) || c == '_')
         {
@@ -226,7 +228,7 @@ internal class PriParserInternal
         // A key that ends in a hash is not accessible but should be retained
         if(Scanner.MatchFirst(['?','#'], out char suffix)) Sb.Append(suffix);
         // Note: this is a variant and not a pri string because we don't want it to be quoted when displayed.
-        priNode = new PriVariant<string>(Sb.ToString());
+        priNode = new PriVariant<string>(PriSbPool.Free(Sb));
         return true;
     }
     private bool TryParseList(out PriNode priNode)
