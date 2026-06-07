@@ -6,6 +6,7 @@ public class PriParser
 {
     private PriParserInternal? _ParserInternal;
     private PriParserInternal ParserInternal{get=>_ParserInternal??=new();}
+    public PriPrettyPrinter PrettyPrinter{private get; set;} = new();
     public bool TryParse(string src, out PriNode priNode)
     {
         bool res = ParserInternal.TryParse(src, out priNode);
@@ -14,5 +15,9 @@ public class PriParser
             Console.WriteLine(error.ToString());
         }
         return res;
+    }
+    public string PrettyPrint(PriNode priNode)
+    {
+        return PrettyPrinter.PrettyPrint(priNode);
     }
 }

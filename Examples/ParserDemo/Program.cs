@@ -8,5 +8,5 @@ string src = File.ReadAllText("Examples/Data/people.pri");
 PriParser parser = new();
 if(parser.TryParse(src, out var priNode))
 {
-    Console.WriteLine(priNode.ToString());
+    Console.WriteLine(parser.PrettyPrint(priNode));
 }
