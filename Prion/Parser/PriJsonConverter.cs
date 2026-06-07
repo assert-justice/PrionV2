@@ -22,7 +22,8 @@ internal class PriJsonConverter
             case System.Text.Json.JsonValueKind.Number:
                 // Todo: handle infinity/nan bs
                 if(!double.TryParse(jsonNode.ToString(), out double d)) return PriNull.Null;
-                return new PriNumber(d);
+                if(d == MathF.Round((float)d)) return new PriNumber((int)d);
+                else return new PriNumber(d);
             case System.Text.Json.JsonValueKind.True:
                 return PriBool.True;
             case System.Text.Json.JsonValueKind.False:

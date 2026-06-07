@@ -1,4 +1,5 @@
-﻿using Prion.Node;
+﻿using System.Text.Json.Nodes;
+using Prion.Node;
 
 namespace Prion.Parser;
 
@@ -19,5 +20,9 @@ public class PriParser
     public string PrettyPrint(PriNode priNode)
     {
         return PrettyPrinter.PrettyPrint(priNode);
+    }
+    public PriNode JsonToPrion(JsonNode? jsonNode)
+    {
+        return PriJsonConverter.JsonToPrion(jsonNode);
     }
 }
