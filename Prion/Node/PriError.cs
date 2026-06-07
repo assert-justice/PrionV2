@@ -11,9 +11,12 @@ public class PriError: PriNode
     public readonly int LineNumber;
     public readonly int Position;
     public readonly string LineText;
+
+    public override PriNodeKind Kind => PriNodeKind.Error;
+
     // private readonly StringBuilder Sb = new();
     // public bool IsError => false;
-    public override bool IsError(){return true;}
+    public override bool IsError => true;
     public PriError(string message, string src = "", int charIndex = 0, string filename = "[anonymous file]")
     {
         Message = message;

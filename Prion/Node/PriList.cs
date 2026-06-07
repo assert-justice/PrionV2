@@ -9,7 +9,8 @@ public class PriList: PriNode
     {
         Values = values;
     }
-    public override bool IsImmutable(){return false;}
+    public override PriNodeKind Kind => PriNodeKind.List;
+    public override bool IsImmutable => false;
     public override string ToString()
     {
         var Sb = PriSbPool.Get();

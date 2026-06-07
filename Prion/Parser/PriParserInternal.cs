@@ -220,7 +220,7 @@ internal class PriParserInternal
         else
         {
             if(!TryParseValue(out priNode)) return false;
-            if(!priNode.IsImmutable()) return SetError("Identifiers must be immutable", start, out priNode);
+            if(!priNode.IsImmutable) return SetError("Identifiers must be immutable", start, out priNode);
             Sb.Append(priNode.ToString());
         }
         // Handle special key suffixes. 
@@ -317,7 +317,7 @@ internal class PriParserInternal
         if(MatchSymbol('-')) negate = true;
         if(TryParseNumber(out priNode, negate)) return true;
         // Console.WriteLine(priNode);
-        if(priNode.IsError()) return false;
+        if(priNode.IsError) return false;
         if(Error is not null) return false;
         Scanner.TryPeek(out char c);
         return SetError($"Unexpected character '{c}'", out priNode);
@@ -326,7 +326,7 @@ internal class PriParserInternal
     {
         Scanner.SetSrc(src);
         if(!TryParseValue(out priNode)) return false;
-        if(priNode.IsError()) return false;
+        if(priNode.IsError) return false;
         if(Error is not null)
         {
             priNode = Error;

@@ -12,7 +12,9 @@ public class PriDict: PriNode
     {
         Data = data;
     }
-    public override bool IsImmutable(){return false;}
+
+    public override PriNodeKind Kind => PriNodeKind.Dict;
+    public override bool IsImmutable => false;
     public override string ToString()
     {
         // if(Data.Count == 0) return "{}";

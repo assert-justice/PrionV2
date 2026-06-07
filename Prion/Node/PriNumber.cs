@@ -23,6 +23,7 @@ public class PriNumber: PriNode
     public readonly NumberMode Mode;
     public readonly int SizeInBits;
     public readonly NumberRadix Radix;
+    public override PriNodeKind Kind => PriNodeKind.Number;
     // private int? I32_;
     // public int I32{get => I32_ ??= int.Parse(Literal, GetIntNumberStyle());}
     // private long? I64_;
