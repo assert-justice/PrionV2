@@ -7,7 +7,60 @@ internal class PriJsonConverter
 {
     public static JsonNode? PrionToJson(PriNode priNode)
     {
+        switch (priNode.Kind)
+        {
+            case PriNodeKind.Bool:
+                if (priNode is PriBool priBool) return JsonValue.Create(priBool.Value);
+                break;
+            case PriNodeKind.Dict:
+                if (priNode is PriDict priDict) return PriDictToJson(priDict);
+                break;
+            case PriNodeKind.Error:
+                // Todo: add warning?
+                return null;
+            case PriNodeKind.List:
+                if(priNode is PriList priList) return PriListToJson(priList);
+                break;
+            case PriNodeKind.Null:
+                return null;
+            case PriNodeKind.Number:
+                if(priNode is PriNumber priNumber) return JsonValue.Create((double)priNumber.Value);
+                break;
+            case PriNodeKind.String:
+                if(priNode is PriString priString) return JsonValue.Create(priString.Value);
+                break;
+            case PriNodeKind.Variant:
+                try
+                {
+                    return JsonNode.Parse(priNode.ToString() ?? "null");
+                }
+                catch
+                {
+                    // Todo: warn the variant could not be parsed.
+                }
+                break;
+            default:
+                break;
+        }
         return null;
+    }
+    public static JsonObject PriDictToJson(PriDict priDict)
+    {
+        JsonObject res = [];
+        foreach (var (key,value) in priDict.Data)
+        {
+            res[key] = PrionToJson(value);
+        }
+        return res;
+    }
+    public static JsonArray PriListToJson(PriList priList)
+    {
+        JsonArray res = [];
+        foreach (var value in priList.Values)
+        {
+            res.Add(PrionToJson(value));
+        }
+        return res;
     }
     public static PriNode JsonToPrion(JsonNode? jsonNode)
     {
@@ -36,7 +89,7 @@ internal class PriJsonConverter
                 return PriNull.Null;
         }
     }
-    private static PriDict JsonObjectToPrion(JsonObject jsonObject)
+    public static PriDict JsonObjectToPrion(JsonObject jsonObject)
     {
         PriDict dict = new();
         foreach (var (key,value) in jsonObject)
@@ -45,7 +98,7 @@ internal class PriJsonConverter
         }
         return dict;
     }
-    private static PriList JsonArrayToPrion(JsonArray jsonArray)
+    public static PriList JsonArrayToPrion(JsonArray jsonArray)
     {
         PriList list = new();
         foreach (var item in jsonArray)
